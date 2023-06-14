@@ -1,12 +1,12 @@
-const int esquerdaFrente = 10;
-const int esquerdaTras = 11;
-const int direitaFrente = 12;
-const int direitaTras = 13;
+const int esquerdaFrente = // Port for left motor forward;
+const int esquerdaTras = // Port for left motor backward;
+const int direitaFrente = // Port for right motor forward;
+const int direitaTras =// Port for right motor backward 13;
 
-const int triggerPin1 = 8; 
-const int echoPin1 = 4;    
-const int triggerPin2 = 7; 
-const int echoPin2 = 5;    
+const int triggerPin1 = // Port for Sensor 1 Trigger;
+const int echoPin1 = // Port for Sensor 1 Echo;
+const int triggerPin2 =  // Port for Sensor 2 Trigger;
+const int echoPin2 = // Port for Sensor 2 Echo;
 
 const int distanciaMinima = 20; 
 
@@ -25,7 +25,7 @@ void setup() {
 }
 
 void loop() {
-  // Mede a distância do sensor ultrassônico 1
+  // Measure distance from ultrasonic sensor 1
   long duracao1, distancia1;
   digitalWrite(triggerPin1, LOW);
   delayMicroseconds(2);
@@ -35,7 +35,7 @@ void loop() {
   duracao1 = pulseIn(echoPin1, HIGH);
   distancia1 = duracao1 * 0.034 / 2;
   
-  // Mede a distância do sensor ultrassônico 2
+  // Measure distance from ultrasonic sensor 2
   long duracao2, distancia2;
   digitalWrite(triggerPin2, LOW);
   delayMicroseconds(2);
@@ -45,29 +45,29 @@ void loop() {
   duracao2 = pulseIn(echoPin2, HIGH);
   distancia2 = duracao2 * 0.034 / 2;
 
-  Serial.print("Distancia Sensor 1: ");
+  Serial.print("Distance Sensor 1: ");
   Serial.print(distancia1);
   Serial.print(" cm");
 
-  Serial.print("Distancia Sensor 2: ");
+  Serial.print("Distance Sensor 2: ");
   Serial.print(distancia2);
   Serial.print(" cm");
 
-  // Verifica se há obstáculo próximo
+  // Check for nearby obstacle
   if (distancia1 < distanciaMinima || distancia2 < distanciaMinima) {
-    // Calcula a diferença de distância entre os sensores
+    // Calculate distance difference between sensors
     int diferencaDistancia = distancia1 - distancia2;
 
     if (diferencaDistancia > 0) {
-      // Vira para a direita
+      // Turn right
       moverParaDireita(diferencaDistancia);
     } else {
-      // Vira para a esquerda
+      // Turn left
       moverParaEsquerda(-diferencaDistancia);
     }
     delay(1000); 
   } else {
-    // Move para frente
+    // Move forward
     moverParaFrente();
   }
 }
