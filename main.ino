@@ -1,7 +1,7 @@
 const int esquerdaFrente = // Port for left motor forward;
 const int esquerdaTras = // Port for left motor backward;
 const int direitaFrente = // Port for right motor forward;
-const int direitaTras =// Port for right motor backward 13;
+const int direitaTras =// Port for right motor backward ;
 
 const int triggerPin1 = // Port for Sensor 1 Trigger;
 const int echoPin1 = // Port for Sensor 1 Echo;
