@@ -11,4 +11,4 @@ const int direitaTras = 13;
 const int triggerPin1 = 8; 
 const int echoPin1 = 4;    
 const int triggerPin2 = 7; 
-const int echoPin2 = 5;```
+const int echoPin2 = 5;
