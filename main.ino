@@ -8,8 +8,7 @@ const int echoPin1 = // Port for Sensor 1 Echo;
 const int triggerPin2 =  // Port for Sensor 2 Trigger;
 const int echoPin2 = // Port for Sensor 2 Echo;
 
-const int distanciaMinima = 20; 
-
+const int distanciaMinima = 20; // Min distance
 void setup() {
   pinMode(esquerdaFrente, OUTPUT);
   pinMode(esquerdaTras, OUTPUT);
@@ -25,77 +24,75 @@ void setup() {
 }
 
 void loop() {
-  // Measure distance from ultrasonic sensor 1
+
   long duracao1, distancia1;
+
   digitalWrite(triggerPin1, LOW);
   delayMicroseconds(2);
   digitalWrite(triggerPin1, HIGH);
   delayMicroseconds(10);
   digitalWrite(triggerPin1, LOW);
+  
   duracao1 = pulseIn(echoPin1, HIGH);
   distancia1 = duracao1 * 0.034 / 2;
   
-  // Measure distance from ultrasonic sensor 2
   long duracao2, distancia2;
+
   digitalWrite(triggerPin2, LOW);
   delayMicroseconds(2);
   digitalWrite(triggerPin2, HIGH);
   delayMicroseconds(10);
   digitalWrite(triggerPin2, LOW);
+
   duracao2 = pulseIn(echoPin2, HIGH);
   distancia2 = duracao2 * 0.034 / 2;
 
-  Serial.print("Distance Sensor 1: ");
-  Serial.print(distancia1);
-  Serial.print(" cm");
+  int diferencaDistancia1 = distancia1 - distancia2;
+  int diferencaDistancia2 = distancia2 - distancia1;
 
-  Serial.print("Distance Sensor 2: ");
-  Serial.print(distancia2);
-  Serial.print(" cm");
-
-  // Check for nearby obstacle
-  if (distancia1 < distanciaMinima || distancia2 < distanciaMinima) {
-    // Calculate distance difference between sensors
-    int diferencaDistancia = distancia1 - distancia2;
-
-    if (diferencaDistancia > 0) {
-      // Turn right
-      moverParaDireita(diferencaDistancia);
-    } else {
-      // Turn left
-      moverParaEsquerda(-diferencaDistancia);
+  if(distancia1 <= 5 || distancia2 <= 5 || distancia1 <= 5 && distancia2 <= 5 || distancia1 == 5 || distancia2 == 5 || distancia1 == 5 && distancia2 <= 5){
+    re();
+  }else if(distancia1 <= 20 && distancia1 >= 6 || distancia2 <= 20 && distancia2 >= 6){
+    if(diferencaDistancia1 > 0){
+      moverParaEsquerda(diferencaDistancia1);
+    }else if(diferencaDistancia2 > 0){
+      moverParaDireita(diferencaDistancia2);
     }
-    delay(1000); 
-  } else {
-    // Move forward
-    moverParaFrente();
+  }else{
+      moverParaFrente();
   }
+
+}
+
+void re(){
+  analogWrite(direitaTras,250);
+  analogWrite(esquerdaTras, 250);
 }
 
 void moverParaFrente() {
-  digitalWrite(esquerdaFrente, HIGH);
-  digitalWrite(esquerdaTras, LOW);
-  digitalWrite(direitaFrente, HIGH);
-  digitalWrite(direitaTras, LOW);
+  analogWrite(direitaFrente,200);
+  analogWrite(esquerdaFrente, 200);
+  analogWrite(direitaTras, 0);
+  analogWrite(esquerdaTras, 0);
 }
 
-void moverParaTras() {
-  digitalWrite(esquerdaFrente, LOW);
-  digitalWrite(esquerdaTras, HIGH);
-  digitalWrite(direitaFrente, LOW);
-  digitalWrite(direitaTras, HIGH);
+void freio(){
+  analogWrite(direitaFrente,0);
+  analogWrite(esquerdaFrente, 0);
+  analogWrite(direitaTras, 0);
+  analogWrite(esquerdaTras, 0);
 }
 
 void moverParaDireita(int diferenca) {
-  analogWrite(esquerdaFrente, 255); 
+  analogWrite(esquerdaFrente, 200); // Velocidade máxima
   analogWrite(esquerdaTras, 0);
-  analogWrite(direitaFrente, 255 - diferenca); 
+  analogWrite(direitaFrente, 180 - diferenca); // Ajusta a velocidade proporcionalmente à diferença
   analogWrite(direitaTras, 0);
 }
 
 void moverParaEsquerda(int diferenca) {
-  analogWrite(esquerdaFrente, 255 - diferenca); 
+  analogWrite(esquerdaFrente, 180 - diferenca); // Ajusta a velocidade proporcionalmente à diferença
   analogWrite(esquerdaTras, 0);
-  analogWrite(direitaFrente, 255); 
+  analogWrite(direitaFrente, 200); // Velocidade máxima
   analogWrite(direitaTras, 0);
 }
