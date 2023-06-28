@@ -1,20 +1,19 @@
-const int esquerdaFrente = // Port for left motor forward;
-const int esquerdaTras = // Port for left motor backward;
-const int direitaFrente = // Port for right motor forward;
-const int direitaTras =// Port for right motor backward ;
+const int esquerdaFrente = 11;
+const int esquerdaTras = 10;
+const int direitaFrente = 8;
+const int direitaTras = 9;
+const int triggerPin1 = 4;
+const int echoPin1 = 2;
+const int triggerPin2 = 5;
+const int echoPin2 = 3; 
 
-const int triggerPin1 = // Port for Sensor 1 Trigger;
-const int echoPin1 = // Port for Sensor 1 Echo;
-const int triggerPin2 =  // Port for Sensor 2 Trigger;
-const int echoPin2 = // Port for Sensor 2 Echo;
+const int minDist = 30;
 
-const int distanciaMinima = 20; // Min distance
 void setup() {
   pinMode(esquerdaFrente, OUTPUT);
   pinMode(esquerdaTras, OUTPUT);
   pinMode(direitaFrente, OUTPUT);
   pinMode(direitaTras, OUTPUT);
-
   pinMode(triggerPin1, OUTPUT);
   pinMode(echoPin1, INPUT);
   pinMode(triggerPin2, OUTPUT);
@@ -25,7 +24,7 @@ void setup() {
 
 void loop() {
 
-  long duracao1, distancia1;
+  long duracao1, distancia1, duracao2, distancia2;
 
   digitalWrite(triggerPin1, LOW);
   delayMicroseconds(2);
@@ -33,66 +32,61 @@ void loop() {
   delayMicroseconds(10);
   digitalWrite(triggerPin1, LOW);
   
-  duracao1 = pulseIn(echoPin1, HIGH);
-  distancia1 = duracao1 * 0.034 / 2;
-  
-  long duracao2, distancia2;
-
   digitalWrite(triggerPin2, LOW);
   delayMicroseconds(2);
   digitalWrite(triggerPin2, HIGH);
   delayMicroseconds(10);
   digitalWrite(triggerPin2, LOW);
 
+  duracao1 = pulseIn(echoPin1, HIGH);
+  distancia1 = duracao1 * 0.034 / 2;
+
   duracao2 = pulseIn(echoPin2, HIGH);
   distancia2 = duracao2 * 0.034 / 2;
 
-  int diferencaDistancia1 = distancia1 - distancia2;
-  int diferencaDistancia2 = distancia2 - distancia1;
-
-  if(distancia1 <= 5 || distancia2 <= 5 || distancia1 <= 5 && distancia2 <= 5 || distancia1 == 5 || distancia2 == 5 || distancia1 == 5 && distancia2 <= 5){
-    re();
-  }else if(distancia1 <= 20 && distancia1 >= 6 || distancia2 <= 20 && distancia2 >= 6){
-    if(diferencaDistancia1 > 0){
-      moverParaEsquerda(diferencaDistancia1);
-    }else if(diferencaDistancia2 > 0){
-      moverParaDireita(diferencaDistancia2);
+  int diffDist1 = distancia1 - distancia2;
+  int diffDist2 = distancia2 - distancia1;
+  
+  if(distancia1 <= minDist || distancia2 <= minDist){
+    if(diffDist1 > 0){
+      movEsquerda(diffDist1);
+    }else if(diffDist2 > 0){
+      movDireita(diffDist2);
     }
   }else{
-      moverParaFrente();
+    movFrente();
   }
-
 }
 
-void re(){
+void movTras(){
   analogWrite(direitaTras,250);
   analogWrite(esquerdaTras, 250);
 }
 
-void moverParaFrente() {
+void movFrente() {
   analogWrite(direitaFrente,200);
   analogWrite(esquerdaFrente, 200);
   analogWrite(direitaTras, 0);
   analogWrite(esquerdaTras, 0);
 }
 
-void freio(){
+void stop(){
   analogWrite(direitaFrente,0);
   analogWrite(esquerdaFrente, 0);
   analogWrite(direitaTras, 0);
   analogWrite(esquerdaTras, 0);
 }
 
-void moverParaDireita(int diferenca) {
-  analogWrite(esquerdaFrente, 200); // Velocidade máxima
+void movDireita(int diferenca) {
+  analogWrite(esquerdaFrente, 200);
   analogWrite(esquerdaTras, 0);
-  analogWrite(direitaFrente, 180 - diferenca); // Ajusta a velocidade proporcionalmente à diferença
+  analogWrite(direitaFrente, 180 - diferenca);
   analogWrite(direitaTras, 0);
 }
 
-void moverParaEsquerda(int diferenca) {
-  analogWrite(esquerdaFrente, 180 - diferenca); // Ajusta a velocidade proporcionalmente à diferença
+void movEsquerda(int diferenca) {
+  analogWrite(esquerdaFrente, 180 - diferenca);
   analogWrite(esquerdaTras, 0);
-  analogWrite(direitaFrente, 200); // Velocidade máxima
+  analogWrite(direitaFrente, 200);
   analogWrite(direitaTras, 0);
 }
